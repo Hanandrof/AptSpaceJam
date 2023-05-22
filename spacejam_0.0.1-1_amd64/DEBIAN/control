@@ -1,0 +1,6 @@
+Package: spacejam
+Version: 0.0.1
+Maintainer: example <example@example.com>
+Architecture: amd64
+Homepage: http://example.com
+Description: persistence from Team Monstars

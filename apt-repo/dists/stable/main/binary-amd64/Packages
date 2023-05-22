@@ -1,0 +1,12 @@
+Package: spacejam
+Version: 0.0.1
+Architecture: amd64
+Maintainer: example <example@example.com>
+Filename: pool/main/spacejam_0.0.1-1_amd64.deb
+Size: 2348
+MD5sum: 1731a804e8a07125456d5a7475336487
+SHA1: 2751975bcc73471f13a3b0410d4676aaef42e1f4
+SHA256: 41511a0bc6cb4258f4be4379c876ebb74e80914ab230cf8dd4857f0b3e1a9b6a
+Homepage: http://example.com
+Description: persistence from Team Monstars
+

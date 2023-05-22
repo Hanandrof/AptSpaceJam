@@ -1,0 +1,18 @@
+Origin: Jam Repository
+Label: spacejam
+Suite: stable
+Codename: stable
+Version: 1.0
+Architectures: amd64 arm64 arm7
+Components: main
+Description: Persistent Malware installed by Team Monstars
+Date: Wed, 01 Feb 2023 02:05:25 +0000
+MD5Sum:
+ 8d67ef8bbba5a5b4f50e1c0306f763b8 300 main/binary-amd64/Packages.gz
+ 930c530ab72e1f692f7032174a11508d 388 main/binary-amd64/Packages
+SHA1:
+ 148da941fb2693646e51f8e63d3c1ed77d3e0e8e 300 main/binary-amd64/Packages.gz
+ f133f32aa8558721d1ea1469e40406ece679f6c6 388 main/binary-amd64/Packages
+SHA256:
+ f2bcf89393a09421693245aea9d72d24badc970b88a3460dd1a17f5e216daf7b 300 main/binary-amd64/Packages.gz
+ 6fcfd6bdbb07660d0a4cdf9f35d790e686418b81f117c31357218110f6b2a4fb 388 main/binary-amd64/Packages
